@@ -41,12 +41,11 @@ public without sharing class PSUserTriggerHandler {
         }
 
         if(psaToRemove.size() > 0) {
-            delete psaToRemove;
+            Database.delete(psaToRemove, false);
         }
         if(psaToAdd.size() > 0) {
-            insert psaToAdd;
+            Database.insert(psaToAdd, false);
         }
-
     }
 
     private static List<PermissionSetAssignment> getPsaToRemove(String userId) {
