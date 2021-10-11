@@ -1,11 +1,11 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 10-08-2021
+ * @last modified on  : 10-11-2021
  * @last modified by  : VISEO / FFI
 **/
 @isTest
-private class UserTriggerHandlerTest {
+private class PSUserTriggerHandlerTest {
 
     private static List<PermissionSet> getPermSets(integer maxitems) {
         return [
@@ -76,6 +76,7 @@ private class UserTriggerHandlerTest {
         usr1.ProfileId = profiles[1].Id;
         usr1.IsActive = true;
 
+        PSUserTriggerHandler.setBypass(false);
         Test.startTest();
         insert usr1;
         Test.stopTest();
@@ -91,6 +92,38 @@ private class UserTriggerHandlerTest {
         
     }
 
+
+    @isTest
+    private static void testUserCreationNoChangeIfNotActive() {
+        List<PermissionSet> permSets = getPermSets(2);
+        List<Profile> profiles = getProfiles(2);
+        Map<String, Set<String>> assignments = new Map<String, Set<String>>();
+
+        for(Integer i = 0; i < 2; i++){
+            assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
+        }
+        setAssignments(assignments);
+
+        User usr1 = makeUser(1);
+        usr1.ProfileId = profiles[1].Id;
+        usr1.IsActive = false;
+
+        PSUserTriggerHandler.setBypass(false);
+        Test.startTest();
+        insert usr1;
+        Test.stopTest();
+
+        List<PermissionSetAssignment> permSetAssignments =  [
+            SELECT Id, PermissionSetId, AssigneeId, PermissionSet.Name
+            FROM PermissionSetAssignment
+        WHERE AssigneeId = :usr1.Id AND PermissionSet.ProfileId = null
+        ];
+
+        System.assertEquals(0, permSetAssignments.size(), 'There should be no assignment for User1');
+        // System.assertEquals(permSets[1].Id, permSetAssignments[0].PermissionSetId, 'User was assigned the wrong permission set : ' + permSetAssignments[0].PermissionSet.Name);
+        
+    }
+
     @isTest
     private static void testUserCreationNoConfiguration() {
         List<PermissionSet> permSets = getPermSets(2);
@@ -103,6 +136,7 @@ private class UserTriggerHandlerTest {
         usr1.ProfileId = profiles[1].Id;
         usr1.IsActive = true;
 
+        PSUserTriggerHandler.setBypass(false);
         Test.startTest();
         insert usr1;
         Test.stopTest();
@@ -126,7 +160,7 @@ private class UserTriggerHandlerTest {
             assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
         }
         setAssignments(assignments);
-        UserTriggerHandler.setBypass(true);
+        PSUserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
         usr1.ProfileId = profiles[0].Id;
@@ -138,13 +172,48 @@ private class UserTriggerHandlerTest {
             PermissionSetId = permSets[0].Id
         );
 
-        UserTriggerHandler.setBypass(false);
-
-
+        PSUserTriggerHandler.setBypass(false);
         Test.startTest();
         update new User(
             Id = usr1.Id,
             ProfileId = profiles[1].Id
+        );
+        Test.stopTest();
+
+        List<PermissionSetAssignment> permSetAssignments =  [
+            SELECT Id, PermissionSetId, AssigneeId, PermissionSet.Name
+            FROM PermissionSetAssignment
+        WHERE AssigneeId = :usr1.Id AND PermissionSet.ProfileId = null
+        ];
+
+        System.assertEquals(1, permSetAssignments.size(), 'There should be 1 assignment for User1');
+        System.assertEquals(permSets[1].Id, permSetAssignments[0].PermissionSetId, 'User was assigned the wrong permission set : ' + permSetAssignments[0].PermissionSet.Name);
+    }
+
+
+    @isTest
+    private static void testUserUpdateToIsActive() {
+        List<PermissionSet> permSets = getPermSets(2);
+        List<Profile> profiles = getProfiles(2);
+        Map<String, Set<String>> assignments = new Map<String, Set<String>>();
+
+        for(Integer i = 0; i < 2; i++){
+            assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
+        }
+        setAssignments(assignments);
+        PSUserTriggerHandler.setBypass(true);
+
+        User usr1 = makeUser(1);
+        usr1.ProfileId = profiles[1].Id;
+        usr1.IsActive = false;
+        insert usr1;
+
+
+        PSUserTriggerHandler.setBypass(false);
+        Test.startTest();
+        update new User(
+            Id = usr1.Id,
+            isActive = true
         );
         Test.stopTest();
 
@@ -169,7 +238,7 @@ private class UserTriggerHandlerTest {
             assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
         }
         setAssignments(assignments);
-        UserTriggerHandler.setBypass(true);
+        PSUserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
         usr1.ProfileId = profiles[0].Id;
@@ -181,9 +250,7 @@ private class UserTriggerHandlerTest {
             PermissionSetId = permSets[1].Id
         );
 
-        UserTriggerHandler.setBypass(false);
-
-
+        PSUserTriggerHandler.setBypass(false);
         Test.startTest();
         update new User(
             Id = usr1.Id,
@@ -211,7 +278,7 @@ private class UserTriggerHandlerTest {
         assignments.put(profiles[1].Name, new Set<String>{ permSets[1].Name });
 
         setAssignments(assignments);
-        UserTriggerHandler.setBypass(true);
+        PSUserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
         usr1.ProfileId = profiles[0].Id;
@@ -223,7 +290,7 @@ private class UserTriggerHandlerTest {
             PermissionSetId = permSets[0].Id
         );
 
-        UserTriggerHandler.setBypass(false);
+        PSUserTriggerHandler.setBypass(false);
 
 
         Test.startTest();
@@ -241,6 +308,48 @@ private class UserTriggerHandlerTest {
         System.assertEquals(2, permSetAssignments.size(), 'Original assignment is not erased');
     }
 
+
+    @isTest
+    private static void testUserUpdateOldProfileNotDefinedAndNoProfile() {
+        // User already have profile
+        List<PermissionSet> permSets = getPermSets(2);
+        List<Profile> profiles = getProfiles(2);
+        Map<String, Set<String>> assignments = new Map<String, Set<String>>();
+
+        assignments.put(profiles[1].Name, new Set<String>{ permSets[1].Name });
+
+        setAssignments(assignments);
+        PSUserTriggerHandler.setBypass(true);
+
+        User usr1 = makeUser(1);
+        usr1.ProfileId = profiles[0].Id;
+        usr1.IsActive = true;
+        insert usr1;
+
+        // insert new PermissionSetAssignment(
+        //     AssigneeId = usr1.Id,
+        //     PermissionSetId = permSets[0].Id
+        // );
+
+        PSUserTriggerHandler.setBypass(false);
+
+
+        Test.startTest();
+        update new User(
+            Id = usr1.Id,
+            ProfileId = profiles[1].Id
+        );
+        Test.stopTest();
+
+        List<PermissionSetAssignment> permSetAssignments =  [
+            SELECT Id, PermissionSetId, AssigneeId, PermissionSet.Name
+            FROM PermissionSetAssignment
+        WHERE AssigneeId = :usr1.Id AND PermissionSet.ProfileId = null
+        ];
+        System.assertEquals(1, permSetAssignments.size(), 'Perm set not assigned');
+        System.assertEquals(permSets[1].Id, permSetAssignments[0].PermissionSetId, 'User was assigned the wrong permission set : ' + permSetAssignments[0].PermissionSet.Name);
+    }
+
     @isTest
     private static void testUserUpdateNewProfileNotDefined() {
         // User already have profile
@@ -251,7 +360,7 @@ private class UserTriggerHandlerTest {
         assignments.put(profiles[0].Name, new Set<String>{ permSets[0].Name });
 
         setAssignments(assignments);
-        UserTriggerHandler.setBypass(true);
+        PSUserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
         usr1.ProfileId = profiles[0].Id;
@@ -263,7 +372,7 @@ private class UserTriggerHandlerTest {
             PermissionSetId = permSets[0].Id
         );
 
-        UserTriggerHandler.setBypass(false);
+        PSUserTriggerHandler.setBypass(false);
 
 
         Test.startTest();

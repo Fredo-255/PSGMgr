@@ -1,11 +1,11 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 10-08-2021
+ * @last modified on  : 10-11-2021
  * @last modified by  : VISEO / FFI
 **/
 @SuppressWarnings('pmd.ApexCRUDViolation')
-public without sharing class UserTriggerHandler {
+public without sharing class PSUserTriggerHandler {
     
     
     private static Map<String, Set<String>> mapAssignments = new Map<String, Set<String>>();
@@ -14,7 +14,7 @@ public without sharing class UserTriggerHandler {
     private static Map<String, Set<PermissionSetAssignment>> assignmentsByUser = new Map<String, Set<PermissionSetAssignment>>();
 
     private static Map<String, Set<String>> testAssignments;
-    private static Boolean bypass = false;
+    private static Boolean bypass = FeatureManagement.checkPermission('BypassPermsetTrigger');
     
     
     public static void updatePermissionSetsAssignments() {
@@ -59,6 +59,7 @@ public without sharing class UserTriggerHandler {
         Set<String> setNewAssignments = mapAssignments.containsKey(newProfileId)?mapAssignments.get(newProfileId):new Set<String>();
         
         List<PermissionSetAssignment> lstPsa = new List<PermissionSetAssignment>();
+        if(!assignmentsByUser.containsKey(userId)) { return lstPsa; }
 
         for(PermissionSetAssignment psa : assignmentsByUser.get(userId)) {
             if(setOldAssignments.contains(psa.PermissionSetId) && !setNewAssignments.contains(psa.PermissionSetId)) {
@@ -102,11 +103,13 @@ public without sharing class UserTriggerHandler {
         for(User usr : (List<User>)Trigger.new) {
             if(Trigger.isUpdate) {
                 User oldUsr = (User)Trigger.oldMap.get(usr.Id);
-                if(usr.ProfileId != oldUsr.ProfileId) {
+                if(usr.isActive && (usr.ProfileId != oldUsr.ProfileId || !oldUsr.IsActive)) {
                     usrIds.add(usr.Id);
                 }
             } else {
-                usrIds = Trigger.newMap.keySet();
+                if(usr.isActive) {
+                    usrIds.add(usr.Id);
+                }
             }
         }
         return usrIds;
