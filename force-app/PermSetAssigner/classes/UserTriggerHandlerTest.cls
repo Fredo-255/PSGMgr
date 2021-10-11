@@ -38,6 +38,28 @@ private class UserTriggerHandlerTest {
         );
     }
 
+    private static void setAssignments(Map<String, Set<String>> assignments) {
+        List<PermSetProfileAssignment__c> psa = new List<PermSetProfileAssignment__c>();
+        for(String profName : assignments.keySet()) {
+            List<String> lstPermSets = new List<String>();
+            lstPermSets.addAll(assignments.get(profName));
+            String strPermSets = lstPermSets.size() > 0 ? lstPermSets.remove(0) : '';
+            while (lstPermSets.size() > 0) {
+                strPermSets = lstPermSets.remove(0) + ',' + strPermSets;
+            }
+            psa.add(new PermSetProfileAssignment__c(
+                Profile__c = profName,
+                PermissionSets__c = strPermSets
+            ));
+        }
+        if(psa.size() > 0) { 
+            User usr = [SELECT Id FROM User WHERE Id = :UserInfo.getUserId()];
+            System.runAs(usr) {
+                insert psa; 
+            }
+        }
+    }
+
 
     @isTest
     private static void testUserCreation() {
@@ -46,9 +68,9 @@ private class UserTriggerHandlerTest {
         Map<String, Set<String>> assignments = new Map<String, Set<String>>();
 
         for(Integer i = 0; i < 2; i++){
-            assignments.put(profiles[i].Id, new Set<String>{ permSets[i].Id });
+            assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
         }
-        UserTriggerHandler.setAssignments(assignments);
+        setAssignments(assignments);
 
         User usr1 = makeUser(1);
         usr1.ProfileId = profiles[1].Id;
@@ -75,7 +97,7 @@ private class UserTriggerHandlerTest {
         List<Profile> profiles = getProfiles(2);
         Map<String, Set<String>> assignments = new Map<String, Set<String>>();
 
-        UserTriggerHandler.setAssignments(assignments);
+        setAssignments(assignments);
 
         User usr1 = makeUser(1);
         usr1.ProfileId = profiles[1].Id;
@@ -101,9 +123,9 @@ private class UserTriggerHandlerTest {
         Map<String, Set<String>> assignments = new Map<String, Set<String>>();
 
         for(Integer i = 0; i < 2; i++){
-            assignments.put(profiles[i].Id, new Set<String>{ permSets[i].Id });
+            assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
         }
-        UserTriggerHandler.setAssignments(assignments);
+        setAssignments(assignments);
         UserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
@@ -144,9 +166,9 @@ private class UserTriggerHandlerTest {
         Map<String, Set<String>> assignments = new Map<String, Set<String>>();
 
         for(Integer i = 0; i < 2; i++){
-            assignments.put(profiles[i].Id, new Set<String>{ permSets[i].Id });
+            assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
         }
-        UserTriggerHandler.setAssignments(assignments);
+        setAssignments(assignments);
         UserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
@@ -186,9 +208,9 @@ private class UserTriggerHandlerTest {
         List<Profile> profiles = getProfiles(2);
         Map<String, Set<String>> assignments = new Map<String, Set<String>>();
 
-        assignments.put(profiles[1].Id, new Set<String>{ permSets[1].Id });
+        assignments.put(profiles[1].Name, new Set<String>{ permSets[1].Name });
 
-        UserTriggerHandler.setAssignments(assignments);
+        setAssignments(assignments);
         UserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
@@ -226,9 +248,9 @@ private class UserTriggerHandlerTest {
         List<Profile> profiles = getProfiles(2);
         Map<String, Set<String>> assignments = new Map<String, Set<String>>();
 
-        assignments.put(profiles[0].Id, new Set<String>{ permSets[0].Id });
+        assignments.put(profiles[0].Name, new Set<String>{ permSets[0].Name });
 
-        UserTriggerHandler.setAssignments(assignments);
+        setAssignments(assignments);
         UserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);

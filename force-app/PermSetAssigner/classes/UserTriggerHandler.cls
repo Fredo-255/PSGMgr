@@ -22,7 +22,8 @@ public without sharing class UserTriggerHandler {
         if(bypass) { return; } // Opportunity to bypass trigger during test setup
 
         readIds();
-        readConf();
+        readConfFromCMDT();
+        readConfFromData();
 
         List<PermissionSetAssignment> psaToAdd = new List<PermissionSetAssignment>();
         List<PermissionSetAssignment> psaToRemove = new List<PermissionSetAssignment>();
@@ -129,25 +130,42 @@ public without sharing class UserTriggerHandler {
         }
     }
 
-    private static void readConf() {
-        for(PSAssignment__mdt assignment : PSAssignment__mdt.getAll().Values()) {
-            String profId = profIds.get(assignment.Profile__c);
-            List<String> lstPermSetIds = new list<String>();
-            
-            for(String psName : assignment.PermissionSets__c.split(',')) {
-                if(psIds.containsKey(psName)) {
-                    lstPermSetIds.add(psIds.get(psName));
-                }
-            }
+    private static void readConfFromCMDT() {
 
-            if(!mapAssignments.containsKey(profId)) {
-                mapAssignments.put(profId, new Set<String>());
-            }
-            mapAssignments.get(profId).addAll(lstPermSetIds);
+        for(PSAssignment__mdt assignment : PSAssignment__mdt.getAll().Values()) {
+            addAssignmentDataToMap(assignment.Profile__c, assignment.PermissionSets__c);
         }
         if(Test.isRunningTest()) {
-            mapAssignments = testAssignments;
+            mapAssignments.clear();
+            // For tests, only use test provided data (no custom metadata)
         }
+    }
+
+    private static void readConfFromData() {
+
+        for(PermSetProfileAssignment__c assignment : [
+            SELECT Profile__c, PermissionSets__c
+            FROM PermSetProfileAssignment__c
+        ]) 
+        {
+            addAssignmentDataToMap(assignment.Profile__c, assignment.PermissionSets__c);
+        }
+    }
+    
+    private static void addAssignmentDataToMap(String profileName, String permissionSets) {
+        String profId = profIds.get(profileName);
+        List<String> lstPermSetIds = new list<String>();
+
+        for(String psName : permissionSets.split(',')) {
+            if(psIds.containsKey(psName)) {
+                lstPermSetIds.add(psIds.get(psName));
+            }
+        }
+
+        if(!mapAssignments.containsKey(profId)) {
+            mapAssignments.put(profId, new Set<String>());
+        }
+        mapAssignments.get(profId).addAll(lstPermSetIds);
     }
 
     private static void readCurrentAssignments(Set<Id> userIds) {
@@ -166,11 +184,6 @@ public without sharing class UserTriggerHandler {
     @testVisible
     private static void setBypass(Boolean bypassValue) {
         bypass = bypassValue;
-    }
-
-    @testVisible
-    private static void setAssignments(Map<String, Set<String>> assignments) {
-        testAssignments = assignments;
     }
 
 
