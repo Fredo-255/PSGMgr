@@ -6,8 +6,8 @@ This package provides an automated mechanism to automatically assign permission 
 
 ## Installation and setup
 
-###Installation : 
-Sur sandbox beta 1
+### Installation : 
+Sur sandbox
 - Beta 1 : https://test.salesforce.com/packaging/installPackage.apexp?p0=04t09000000iiwkAAA
 - Version 1.0 : (beta to be promoted)
 
