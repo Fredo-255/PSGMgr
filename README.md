@@ -12,10 +12,14 @@ Simply install the package. Considering normal users have no business managing p
 
 ### Special permission sets
 
-The package provides 2 permission sets :
+The package provides the following permission set :
 
 - **Manage Perm Set To Profile Assignments :** Gives R/W access to the configuration application and then configuratrion custom object.
-- **Bypass permset assignment :** Gives the *Bypass Permset Trigger* custom permission. Use this permission/permission set if you do not want the trigger to run (e.g. to optimize mass import of users). 
+
+
+### Bypassing assignments 
+Create a custom permission named **BypassPermSetTrigger**.
+Use this permission in a profile/permission set if you want the running user add/modify users without running the assignment trigger. (e.g. to optimize mass import of users). 
 
 
 ## Configuration
