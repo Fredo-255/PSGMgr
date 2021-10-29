@@ -6,7 +6,15 @@ This package provides an automated mechanism to automatically assign permission 
 
 ## Installation and setup
 
-Simply install the package. Considering normal users have no business managing profiles and permission sets, I recommend installing for Admins only (A permisison set is provided to give access if needed)
+###Installation : 
+Sur sandbox beta 1
+- Beta 1 : https://test.salesforce.com/packaging/installPackage.apexp?p0=04t09000000iiwkAAA
+- Version 1.0 : (beta to be promoted)
+
+En prod
+- Version 1.0 : (beta to be promoted)
+
+Considering normal users have no business managing profiles and permission sets, I recommend installing for Admins only (A permisison set is provided to give access if needed)
 
 **Package installation may assign the _Bypass Permset Trigger_ custom permission to the Admin profile. You'll want to remove it first from Admin profile for the trigger to run**
 
@@ -46,3 +54,5 @@ It then checks if permission sets are assigned to the new profile and if so assi
 
 No license consistency check is done between profile and associated permission sets. Assigning a permission set with a different license is assigned to a profile, the trigger will run but the permission will not be associated to the user.
 No sucess/failure report is generated as of today.
+
+
