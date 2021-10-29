@@ -1,7 +1,7 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 10-11-2021
+ * @last modified on  : 10-12-2021
  * @last modified by  : VISEO / FFI
 **/
 @SuppressWarnings('pmd.ApexCRUDViolation')
@@ -175,7 +175,8 @@ public without sharing class PSUserTriggerHandler {
             SELECT Id, AssigneeId, PermissionSetId
             FROM PermissionSetAssignment
             WHERE AssigneeId IN :userIds AND PermissionSet.ProfileId = null
-        ]) {
+        ]) 
+        {
             if(!assignmentsByUser.containsKey(psa.AssigneeId)) {
                 assignmentsByUser.put(psa.AssigneeId, new Set<PermissionSetAssignment>());
             }
