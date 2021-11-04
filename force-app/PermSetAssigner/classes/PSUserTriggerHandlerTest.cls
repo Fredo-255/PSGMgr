@@ -1,7 +1,7 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 10-11-2021
+ * @last modified on  : 11-04-2021
  * @last modified by  : VISEO / FFI
 **/
 @isTest
@@ -29,7 +29,7 @@ private class PSUserTriggerHandlerTest {
         return new User (
             LastName = 'test' + i,
             Username = 'testuser@ffiprofilemgr.testclass.user' + 'i',
-            Email = 'test@test.com',
+            Email = 'testuser@agpm.fr', // UserInfo.getUserEmail(),
             Alias = 'test' + i, 
             TimeZoneSidKey = 'Europe/Paris',
             EmailEncodingKey = 'UTF-8',
