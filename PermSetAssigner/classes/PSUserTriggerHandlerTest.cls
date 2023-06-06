@@ -204,7 +204,7 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.setBypass(true);
 
         User usr1 = makeUser(1);
-        usr1.ProfileId = profiles[0].Id;
+        usr1.ProfileId = profiles[1].Id;
         usr1.IsActive = false;
         insert usr1;
 
@@ -213,7 +213,6 @@ private class PSUserTriggerHandlerTest {
         Test.startTest();
         update new User(
             Id = usr1.Id,
-            ProfileId = profiles[1].Id,
             isActive = true
         );
         Test.stopTest();
@@ -226,6 +225,51 @@ private class PSUserTriggerHandlerTest {
 
         System.assertEquals(1, permSetAssignments.size(), 'There should be 1 assignment for User1');
         System.assertEquals(permSets[1].Id, permSetAssignments[0].PermissionSetId, 'User was assigned the wrong permission set : ' + permSetAssignments[0].PermissionSet.Name);
+    }
+    
+    @isTest
+    private static void testUserUpdateToInactive() {
+        List<PermissionSet> permSets = getPermSets(2);
+        List<Profile> profiles = getProfiles(2);
+        Map<String, Set<String>> assignments = new Map<String, Set<String>>();
+
+        for(Integer i = 0; i < 2; i++){
+            assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
+        }
+        setAssignments(assignments);
+        PSUserTriggerHandler.setBypass(true);
+
+        User usr1 = makeUser(1);
+        usr1.ProfileId = profiles[1].Id;
+        usr1.IsActive = true;
+        insert usr1;
+
+        insert new PermissionSetAssignment(
+            AssigneeId = usr1.Id,
+            PermissionSetId = permSets[1].Id
+        );
+        insert new PermissionSetAssignment(
+            AssigneeId = usr1.Id,
+            PermissionSetId = permSets[0].Id
+        );
+
+
+        PSUserTriggerHandler.setBypass(false);
+        Test.startTest();
+        update new User(
+            Id = usr1.Id,
+            isActive = false
+        );
+        Test.stopTest();
+
+        List<PermissionSetAssignment> permSetAssignments =  [
+            SELECT Id, PermissionSetId, AssigneeId, PermissionSet.Name
+            FROM PermissionSetAssignment
+        WHERE AssigneeId = :usr1.Id AND PermissionSet.ProfileId = null
+        ];
+
+        System.assertEquals(1, permSetAssignments.size(), 'There should be only 1  assignment left for User 1');
+        System.assertEquals(permSets[0].Id, permSetAssignments[0].PermissionSetId, 'The remaining permission set is the one that should have been removed : ' + permSetAssignments[0].PermissionSet.Name);
     }
 
     @isTest

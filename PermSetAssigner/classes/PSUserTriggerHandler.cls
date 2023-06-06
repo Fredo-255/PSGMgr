@@ -1,11 +1,12 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 10-12-2021
+ * @last modified on  : 06-06-2023
  * @last modified by  : VISEO / FFI
 **/
 @SuppressWarnings('pmd.ApexCRUDViolation')
-public without sharing class PSUserTriggerHandler {   
+public without sharing class PSUserTriggerHandler {
+    
     
     private static Map<String, Set<String>> mapAssignments = new Map<String, Set<String>>();
     private static Map<String, Id> psIds = new Map<string, Id>();
@@ -14,7 +15,8 @@ public without sharing class PSUserTriggerHandler {
 
     private static Map<String, Set<String>> testAssignments;
     private static Boolean bypass = FeatureManagement.checkPermission('BypassPermsetTrigger');
-        
+    
+    
     public static void updatePermissionSetsAssignments() {
 
         if(bypass) { return; } // Opportunity to bypass trigger during test setup
@@ -27,6 +29,7 @@ public without sharing class PSUserTriggerHandler {
         List<PermissionSetAssignment> psaToRemove = new List<PermissionSetAssignment>();
 
         Set<Id> usrIds = filterUserIds(); // in case of update, removes user whose profile is unchanged
+        SYstem.debug('Usr Ids : ' + usrIds); 
         if(usrIds.size() == 0) { return; }
 
         readCurrentAssignments(usrIds);
@@ -53,7 +56,12 @@ public without sharing class PSUserTriggerHandler {
         String newProfileId = newUser.ProfileId;
 
         Set<String> setOldAssignments = mapAssignments.containsKey(oldProfileId)?mapAssignments.get(oldProfileId):new Set<String>();
-        Set<String> setNewAssignments = mapAssignments.containsKey(newProfileId)?mapAssignments.get(newProfileId):new Set<String>();
+        Set<String> setNewAssignments = new Set<String>();
+        if(newUSer.isActive) {
+            // In case the user is deactivated, we want to remove its old assignments, whether or not the profile has changed
+            setNewAssignments = mapAssignments.containsKey(newProfileId)?mapAssignments.get(newProfileId):new Set<String>();
+        }
+        
         
         List<PermissionSetAssignment> lstPsa = new List<PermissionSetAssignment>();
         if(!assignmentsByUser.containsKey(userId)) { return lstPsa; }
@@ -72,6 +80,10 @@ public without sharing class PSUserTriggerHandler {
 
     private static List<PermissionSetAssignment> getPsaToAdd(String userId) {
         User usr = (User)Trigger.newMap.get(userId);
+        if(!usr.IsActive) {
+            // If the user has been deactivated, we return an empty list so that no new assignments are added
+            return new List<PermissionSetAssignment>();
+        }
         String profileId = usr.ProfileId;
         Set<String> setAssignments = mapAssignments.containsKey(profileId)?mapAssignments.get(profileId):new Set<String>();
         List<PermissionSetAssignment> lstPsa = new List<PermissionSetAssignment>();
@@ -100,11 +112,13 @@ public without sharing class PSUserTriggerHandler {
         for(User usr : (List<User>)Trigger.new) {
             if(Trigger.isUpdate) {
                 User oldUsr = (User)Trigger.oldMap.get(usr.Id);
-                if(usr.ProfileId != oldUsr.ProfileId) {
+                if(usr.ProfileId != oldUsr.ProfileId || oldUsr.IsActive != usr.isActive) {
                     usrIds.add(usr.Id);
                 }
             } else {
-                usrIds.add(usr.Id);
+                if(usr.isActive) {
+                    usrIds.add(usr.Id);
+                }
             }
         }
         return usrIds;
