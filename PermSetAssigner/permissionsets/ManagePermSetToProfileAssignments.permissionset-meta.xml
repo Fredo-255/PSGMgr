@@ -9,6 +9,11 @@
         <field>PermSetProfileAssignment__c.PermissionSets__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>User.Force_Permission_Set_Assignment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Manage perm set to profile assignments</label>
     <objectPermissions>

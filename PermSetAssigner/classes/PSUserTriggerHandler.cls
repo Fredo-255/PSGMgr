@@ -27,9 +27,10 @@ public without sharing class PSUserTriggerHandler {
 
         List<PermissionSetAssignment> psaToAdd = new List<PermissionSetAssignment>();
         List<PermissionSetAssignment> psaToRemove = new List<PermissionSetAssignment>();
+        List<User> forceFlagsToClear = getFlagsToClear();
 
         Set<Id> usrIds = filterUserIds(); // in case of update, removes user whose profile is unchanged
-        SYstem.debug('Usr Ids : ' + usrIds); 
+        System.debug('Usr Ids : ' + usrIds); 
         if(usrIds.size() == 0) { return; }
 
         readCurrentAssignments(usrIds);
@@ -46,6 +47,9 @@ public without sharing class PSUserTriggerHandler {
         }
         if(psaToAdd.size() > 0) {
             Database.insert(psaToAdd, false);
+        }
+        if(forceFlagsToClear.size() > 0) {
+            Database.update(forceFlagsToClear, false);
         }
     }
 
@@ -112,7 +116,7 @@ public without sharing class PSUserTriggerHandler {
         for(User usr : (List<User>)Trigger.new) {
             if(Trigger.isUpdate) {
                 User oldUsr = (User)Trigger.oldMap.get(usr.Id);
-                if(usr.ProfileId != oldUsr.ProfileId || oldUsr.IsActive != usr.isActive) {
+                if(usr.ProfileId != oldUsr.ProfileId || oldUsr.IsActive != usr.isActive || (usr.Force_Permission_Set_Assignment__c && usr.IsActive)) {
                     usrIds.add(usr.Id);
                 }
             } else {
@@ -122,6 +126,19 @@ public without sharing class PSUserTriggerHandler {
             }
         }
         return usrIds;
+    }
+
+    private static List<User> getFlagsToClear() {
+        List<User> lstUsers = new List<user>();
+        for(User usr : (List<User>)Trigger.New) {
+            if(usr.Force_Permission_Set_Assignment__c) {
+                lstUsers.add(new User(
+                    id = usr.Id,
+                    Force_Permission_Set_Assignment__c = false
+                ));
+            }
+        }
+        return lstUsers;
     }
     
 

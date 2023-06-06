@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_Permission_Set_Assignment__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Force permission set recalculation when user is modified even if profile is left unchanged</description>
+    <externalId>false</externalId>
+    <label>Force Permission Set Assignment</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,5 +1,13 @@
 # Permission set assigner
 
+## Release Notes
+### 0.5 : 
+Inital Beta version
+
+### 1.0.0
+Improved handlibng of user deactivation
+Add a force flag
+
 ## Description
 
 This package provides an automated mechanism to automatically assign permission sets and / or permission set groups to users based on their profiles
@@ -49,6 +57,15 @@ When a new *active* user is created the algorithm checks if one or more permissi
 
 When an active user changes profile or an inactive user is activated, the algorithm first checks if permission sets are assigned to the original profile and if so removes them from the user.
 It then checks if permission sets are assigned to the new profile and if so assigns them to the the user. 
+
+*__New in version 1.0.0__*
+
+When an user is deactivated permission set that where assigned due to ist profile, are removed (they will be reenabled when the user is reactivated)
+
+Checking the Force Permission set Assignment flag will force the algorithm to run. *Note : This will not clear assignments fot permission sets removed from configuration, chek for a new version  in the future* 
+
+
+
 
 ## Notes
 

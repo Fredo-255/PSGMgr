@@ -190,6 +190,47 @@ private class PSUserTriggerHandlerTest {
         System.assertEquals(permSets[1].Id, permSetAssignments[0].PermissionSetId, 'User was assigned the wrong permission set : ' + permSetAssignments[0].PermissionSet.Name);
     }
 
+    @isTest
+    private static void testUserUpdateWithForceFlagOn() {
+        List<PermissionSet> permSets = getPermSets(2);
+        List<Profile> profiles = getProfiles(2);
+        Map<String, Set<String>> assignments = new Map<String, Set<String>>();
+
+        for(Integer i = 0; i < 2; i++){
+            assignments.put(profiles[i].Name, new Set<String>{ permSets[i].Name });
+        }
+        setAssignments(assignments);
+        PSUserTriggerHandler.setBypass(true);
+
+        User usr1 = makeUser(1);
+        usr1.ProfileId = profiles[0].Id;
+        usr1.IsActive = true;
+        insert usr1;
+
+        PSUserTriggerHandler.setBypass(false);
+        Test.startTest();
+        update new User(
+            Id = usr1.Id,
+            Force_Permission_Set_Assignment__c = true
+        );
+        Test.stopTest();
+
+        List<PermissionSetAssignment> permSetAssignments =  [
+            SELECT Id, PermissionSetId, AssigneeId, PermissionSet.Name
+            FROM PermissionSetAssignment
+        WHERE AssigneeId = :usr1.Id AND PermissionSet.ProfileId = null
+        ];
+
+        List<User> users = [
+            SELECT Id, Force_Permission_Set_Assignment__c
+            FROM User
+            WHERE Id =: usr1.id];
+
+        System.assertEquals(1, permSetAssignments.size(), 'There should be 1 assignment for User1');
+        System.assertEquals(permSets[0].Id, permSetAssignments[0].PermissionSetId, 'User was assigned the wrong permission set : ' + permSetAssignments[0].PermissionSet.Name);
+        System.Assert.isFalse(users[0].Force_Permission_Set_Assignment__c, 'Force flag should have been cleared');
+    }
+
 
     @isTest
     private static void testUserUpdateToIsActive() {
