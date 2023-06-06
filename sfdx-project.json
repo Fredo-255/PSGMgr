@@ -5,7 +5,7 @@
             "default": true
         },
         {
-            "path": "force-app/PermSetAssigner",
+            "path": "PermSetAssigner",
             "package": "PermSetAssigner",
             "versionName": "ver 0.5",
             "versionNumber": "0.5.0.NEXT",
