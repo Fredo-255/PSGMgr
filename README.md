@@ -6,6 +6,7 @@ Inital Beta version
 
 ### 1.0.0
 Improved handling of user deactivation
+
 Add a force flag
 
 ## Description
