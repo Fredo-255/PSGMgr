@@ -1,10 +1,10 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 06-06-2023
+ * @last modified on  : 01-18-2024
  * @last modified by  : VISEO / FFI
 **/
-@SuppressWarnings('pmd.ApexCRUDViolation')
+@SuppressWarnings('pmd.CognitiveComplexity')
 public without sharing class PSUserTriggerHandler {
     
     
@@ -21,6 +21,10 @@ public without sharing class PSUserTriggerHandler {
 
         if(bypass) { return; } // Opportunity to bypass trigger during test setup
 
+        Set<Id> usrIds = filterUserIds(); // in case of update, removes user whose profile is unchanged
+        System.debug('Usr Ids : ' + usrIds); 
+        if(usrIds.isEmpty()) { return; }
+
         readIds();
         readConfFromCMDT();
         readConfFromData();
@@ -28,10 +32,6 @@ public without sharing class PSUserTriggerHandler {
         List<PermissionSetAssignment> psaToAdd = new List<PermissionSetAssignment>();
         List<PermissionSetAssignment> psaToRemove = new List<PermissionSetAssignment>();
         List<User> forceFlagsToClear = getFlagsToClear();
-
-        Set<Id> usrIds = filterUserIds(); // in case of update, removes user whose profile is unchanged
-        System.debug('Usr Ids : ' + usrIds); 
-        if(usrIds.size() == 0) { return; }
 
         readCurrentAssignments(usrIds);
 
@@ -43,13 +43,13 @@ public without sharing class PSUserTriggerHandler {
         }
 
         if(psaToRemove.size() > 0) {
-            Database.delete(psaToRemove, false);
+            Database.delete(psaToRemove, false, AccessLevel.SYSTEM_MODE);
         }
         if(psaToAdd.size() > 0) {
-            Database.insert(psaToAdd, false);
+            Database.insert(psaToAdd, false, AccessLevel.SYSTEM_MODE);
         }
         if(forceFlagsToClear.size() > 0) {
-            Database.update(forceFlagsToClear, false);
+            Database.update(forceFlagsToClear, false, AccessLevel.SYSTEM_MODE);
         }
     }
 
@@ -145,7 +145,8 @@ public without sharing class PSUserTriggerHandler {
     private static void readIds() {
         for(Profile prof : [
                 SELECT Id, Name 
-                FROM Profile ]) 
+                FROM Profile 
+                WITH SYSTEM_MODE]) 
         {
             profIds.put(prof.Name, prof.Id);
         }
@@ -153,7 +154,8 @@ public without sharing class PSUserTriggerHandler {
         for(PermissionSet ps : [
             SELECT Id, Name 
             FROM PermissionSet 
-            WHERE PermissionSet.ProfileId = null]) 
+            WHERE PermissionSet.ProfileId = null
+            WITH SYSTEM_MODE]) 
         {
             psIds.put(ps.Name, ps.Id);
         }
@@ -175,6 +177,7 @@ public without sharing class PSUserTriggerHandler {
         for(PermSetProfileAssignment__c assignment : [
             SELECT Profile__c, PermissionSets__c
             FROM PermSetProfileAssignment__c
+            WITH SYSTEM_MODE
         ]) 
         {
             addAssignmentDataToMap(assignment.Profile__c, assignment.PermissionSets__c);
@@ -202,6 +205,7 @@ public without sharing class PSUserTriggerHandler {
             SELECT Id, AssigneeId, PermissionSetId
             FROM PermissionSetAssignment
             WHERE AssigneeId IN :userIds AND PermissionSet.ProfileId = null
+            WITH SYSTEM_MODE
         ]) 
         {
             if(!assignmentsByUser.containsKey(psa.AssigneeId)) {
