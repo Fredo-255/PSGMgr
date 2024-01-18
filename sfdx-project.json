@@ -1,28 +1,23 @@
 {
-    "packageDirectories": [
-        {
-            "path": "force-app",
-            "default": true
-        },
-        {
-            "path": "PermSetAssigner",
-            "package": "PermSetAssigner",
-            "versionName": "ver 1.0",
-            "versionNumber": "1.0.0.NEXT",
-            "default": false
-        }
-    ],
-    "name": "PSGMgr",
-    "namespace": "",
-    "sfdcLoginUrl": "https://login.salesforce.com",
-    "sourceApiVersion": "52.0",
-    "packageAliases": {
-        "PermSetAssigner": "0Ho09000000sY8XCAU",
-        "PermSetAssigner@0.1.0-1": "04t09000000iieoAAA",
-        "PermSetAssigner@0.4.0-1": "04t09000000iifrAAA",
-        "PermSetAssigner@0.5.0-1": "04t09000000iig1AAA",
-        "PermSetAssigner@0.5.0-2": "04t09000000iigBAAQ",
-        "PermSetAssigner@0.5.0-3": "04t09000000iigQAAQ",
-        "PermSetAssigner@0.5.0-4": "04t09000000iiwkAAA"
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true
+    },
+    {
+      "path": "PermSetAssigner",
+      "default": false,
+      "package": "PermSetAssigner",
+      "versionName": "mgd 1.0",
+      "versionNumber": "1.0.0.NEXT",
+      "versionDescription": ""
     }
+  ],
+  "name": "PermSetAssigner",
+  "namespace": "psa255",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "59.0",
+  "packageAliases": {
+    "PermSetAssigner": "0HoWx000000004rKAA"
+  }
 }
