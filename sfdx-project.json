@@ -8,9 +8,10 @@
       "path": "PermSetAssigner",
       "default": false,
       "package": "PermSetAssigner",
-      "versionName": "mgd 1.0",
-      "versionNumber": "1.0.0.NEXT",
-      "versionDescription": ""
+      "versionName": "mgd 1.2",
+      "versionNumber": "1.2.0.NEXT",
+      "versionDescription": "",
+      "ancestorVersion": "1.1.0"
     }
   ],
   "name": "PermSetAssigner",

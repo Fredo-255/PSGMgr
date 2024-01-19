@@ -6,8 +6,13 @@ Inital Beta version
 
 ### 1.0.0
 Improved handling of user deactivation
-
 Add a force flag
+
+### 1.1.0
+Managed package. You'll have to import your configuration from the old to the new psa255__ objects
+Refactoring of test classes to make packaging work again
+Clean up Perm Set to Profile Assignment record page
+
 
 ## Description
 
@@ -16,16 +21,16 @@ This package provides an automated mechanism to automatically assign permission 
 ## Installation and setup
 
 ### Installation : 
-Sur sandbox
-- Beta 1 : https://test.salesforce.com/packaging/installPackage.apexp?p0=04t09000000iiwkAAA
-- Version 1.0 : (beta to be promoted)
+On a sandbox
+- Version 1.1 : https://login.salesforce.com/packaging/installPackage.apexp?p0=04tWx00000004oPIAQ 
 
-En prod
-- Version 1.0 : (beta to be promoted)
+On production
+- Version 1.1 : https://login.salesforce.com/packaging/installPackage.apexp?p0=04tWx00000004oPIAQ 
 
 Considering normal users have no business managing profiles and permission sets, I recommend installing for Admins only (A permisison set is provided to give access if needed)
 
-**Package installation may assign the _Bypass Permset Trigger_ custom permission to the Admin profile. You'll want to remove it first from Admin profile for the trigger to run**
+**Package installation will  the _psa255.Bypass Permset Trigger_ custom permission to the Admin profile. You'll want to remove it first from Admin profile for the trigger to run**
+(There is no way as of today to prevent this permission from being added to the Admin profile while installling the package)
 
 ### Special permission sets
 
@@ -35,13 +40,13 @@ The package provides the following permission set :
 
 
 ### Bypassing assignments 
-Create a custom permission named **BypassPermSetTrigger**.
-Use this permission in a profile/permission set if you want the running user add/modify users without running the assignment trigger. (e.g. to optimize mass import of users). 
+The **pas255.BypassPermSetTrigger** is provided to bypass automatic assignment should you need to.
+Use this permission in a profile/permission set if you want the running user to add/modify users without running the assignment trigger. (e.g. to optimize mass import of users). 
 
 
 ## Configuration
 
-Assignments can be defined through both the PSAssignment__mdt custom metadatype (easier to manage if you want to deploy configuration accross environments) or the PermSetAssignment__c custom object. 
+Assignments can be defined through both the pas255__PSAssignment__mdt custom metadatype (easier to manage if you want to deploy configuration accross environments) or the psa255__PermSetAssignment__c custom object. 
 
 For each of these configuration items you have two fields :
 - Profile : Name of the profile to which permission sets are assigned
@@ -49,10 +54,10 @@ For each of these configuration items you have two fields :
 
 While it is possible to define more than one assignment list for a given profile, for more flexibility, it is recommended to use permission set groups should you have to manage multiple permission sets assignments to one profile. 
 
-*It is to be noted that no action is performed when you update the Permission Set Assigner configuration. Permissions set are only assigned during user creation, activation, or change of permission sets*
+*It is to be noted that no action is performed when you update the Permission Set Assigner configuration. Permissions set are only assigned during user creation, activation, or change of permission sets. You may however use the _Force Permission set Assignment_ flag on users to recalculate assignments *
 
 
-## How does it work ?
+## How does it work  
 
 When a new *active* user is created the algorithm checks if one or more permission sets are assigned to the user profile. If so, these permission sets are automatically assigned to the user.
 
@@ -70,7 +75,7 @@ Checking the Force Permission set Assignment flag will force the algorithm to ru
 
 ## Notes
 
-No license consistency check is done between profile and associated permission sets. Assigning a permission set with a different license is assigned to a profile, the trigger will run but the permission will not be associated to the user.
+No license consistency check is done between profile and associated permission sets. If a permission set with a different license is assigned to a profile, the trigger will run but the permission set will not be associated to the user.
 No sucess/failure report is generated as of today.
 
 
