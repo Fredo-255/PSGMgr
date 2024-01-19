@@ -40,7 +40,7 @@ The package provides the following permission set :
 
 
 ### Bypassing assignments 
-The **pas255.BypassPermSetTrigger** is provided to bypass automatic assignment should you need to.
+The **psa255.BypassPermSetTrigger** is provided to bypass automatic assignment should you need to.
 Use this permission in a profile/permission set if you want the running user to add/modify users without running the assignment trigger. (e.g. to optimize mass import of users). 
 
 
