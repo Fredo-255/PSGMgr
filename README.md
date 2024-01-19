@@ -32,7 +32,7 @@ On production
 
 Considering normal users have no business managing profiles and permission sets, I recommend installing for Admins only (A permisison set is provided to give access if needed)
 
-**Package installation will  the _psa255.Bypass Permset Trigger_ custom permission to the Admin profile. You'll want to remove it first from Admin profile for the trigger to run**
+**Package installation will assign the _psa255.Bypass Permset Trigger_ custom permission to the Admin profile. You'll want to remove it first from the Admin profile for the trigger to run**
 
 (There is no way as of today to prevent this permission from being added to the Admin profile while installling the package)
 
