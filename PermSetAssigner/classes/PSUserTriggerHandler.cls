@@ -1,10 +1,9 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 01-18-2024
+ * @last modified on  : 01-19-2024
  * @last modified by  : VISEO / FFI
 **/
-@SuppressWarnings('pmd.CognitiveComplexity')
 public without sharing class PSUserTriggerHandler {
     
     

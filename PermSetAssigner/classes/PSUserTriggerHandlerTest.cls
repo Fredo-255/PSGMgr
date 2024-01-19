@@ -1,7 +1,7 @@
 /**
  * @description       : 
  * @author            : VISEO / FFI
- * @last modified on  : 01-18-2024
+ * @last modified on  : 01-19-2024
  * @last modified by  : VISEO / FFI
 **/
 @isTest
@@ -88,8 +88,8 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.updatePermissionSetsAssignments();
         Test.stopTest();
 
-        System.assertEquals(1, PSAAssignments.inserted, 'A ssignment should have bneen inserted');
-        System.assertEquals(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
+        Assert.areEqual(1, PSAAssignments.inserted, 'A ssignment should have bneen inserted');
+        Assert.areEqual(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
     }
 
     @isTest
@@ -113,7 +113,7 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.updatePermissionSetsAssignments();
         Test.stopTest();
 
-        System.assertEquals(0, PSAAssignments.inserted, 'There should be no assignment for User1');
+        Assert.areEqual(0, PSAAssignments.inserted, 'There should be no assignment for User1');
         
     }
 
@@ -136,7 +136,7 @@ private class PSUserTriggerHandlerTest {
         Test.stopTest();
 
 
-        System.assertEquals(0, PSAAssignments.inserted, 'There should be no assignment for User1');
+        Assert.areEqual(0, PSAAssignments.inserted, 'There should be no assignment for User1');
     }
 
     @isTest
@@ -180,9 +180,9 @@ private class PSUserTriggerHandlerTest {
         Test.stopTest();
 
 
-        System.assertEquals(1, PSAAssignments.inserted, 'There should be 1 created');
-        System.assertEquals(1, PSAAssignments.deleted, 'Previous assignment soud be removed');
-        System.assertEquals(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
+        Assert.areEqual(1, PSAAssignments.inserted, 'There should be 1 created');
+        Assert.areEqual(1, PSAAssignments.deleted, 'Previous assignment soud be removed');
+        Assert.areEqual(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
     }
 
     @isTest
@@ -218,8 +218,8 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.updatePermissionSetsAssignments();
         Test.stopTest();
 
-        System.assertEquals(1, PSAAssignments.inserted, 'There should be 1 assignment for User1');
-        System.assertEquals(permSets[0].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
+        Assert.areEqual(1, PSAAssignments.inserted, 'There should be 1 assignment for User1');
+        Assert.areEqual(permSets[0].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
         Assert.areEqual(1, PSAUsers.updated, '1 user should have been updated');
     }
 
@@ -258,8 +258,8 @@ private class PSUserTriggerHandlerTest {
         Test.stopTest();
 
 
-        System.assertEquals(1, PSAAssignments.inserted, 'There should be 1 assignment for User1');
-        System.assertEquals(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
+        Assert.areEqual(1, PSAAssignments.inserted, 'There should be 1 assignment for User1');
+        Assert.areEqual(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
     }
     
     @isTest
@@ -305,8 +305,8 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.updatePermissionSetsAssignments();
         Test.stopTest();
 
-        System.assertEquals(1, PSAAssignments.deleted, 'A assignment soulld be deleted for User 1');
-        System.assertEquals(PSAAssignments.currentAssignments[1].Id, PSAAssignments.toRemove[0].Id, 'Wrong assignment removed : ' + PSAAssignments.toRemove[0].Id);
+        Assert.areEqual(1, PSAAssignments.deleted, 'A assignment soulld be deleted for User 1');
+        Assert.areEqual(PSAAssignments.currentAssignments[1].Id, PSAAssignments.toRemove[0].Id, 'Wrong assignment removed : ' + PSAAssignments.toRemove[0].Id);
     }
 
     @isTest
@@ -346,7 +346,7 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.updatePermissionSetsAssignments();
         Test.stopTest();
 
-        System.assertEquals(0, PSAAssignments.inserted, 'No assigments to add');
+        Assert.areEqual(0, PSAAssignments.inserted, 'No assigments to add');
     }
 
     @isTest
@@ -386,8 +386,8 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.updatePermissionSetsAssignments();
         Test.stopTest();
 
-        System.assertEquals(1, PSAAssignments.inserted, 'A new assignment soulld be added for User 1');
-        System.assertEquals(0, PSAAssignments.deleted, 'Old assignment soulld not be deleted for User 1');
+        Assert.areEqual(1, PSAAssignments.inserted, 'A new assignment soulld be added for User 1');
+        Assert.areEqual(0, PSAAssignments.deleted, 'Old assignment soulld not be deleted for User 1');
     }
 
 
@@ -430,8 +430,8 @@ private class PSUserTriggerHandlerTest {
             FROM PermissionSetAssignment
         WHERE AssigneeId = :usr1.Id AND PermissionSet.ProfileId = null
         ];
-        System.assertEquals(1, PSAAssignments.inserted, 'Perm set not assigned');
-        System.assertEquals(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
+        Assert.areEqual(1, PSAAssignments.inserted, 'Perm set not assigned');
+        Assert.areEqual(permSets[1].Id, PSAAssignments.toAdd[0].PermissionSetId, 'User was assigned the wrong permission set : ' + PSAAssignments.toAdd[0].PermissionSet.Name);
     }
 
     @isTest
@@ -472,7 +472,7 @@ private class PSUserTriggerHandlerTest {
         PSUserTriggerHandler.updatePermissionSetsAssignments();
         Test.stopTest();
 
-        System.assertEquals(0, PSAAssignments.inserted, 'No new assignment should be added for User 1');
-        System.assertEquals(1, PSAAssignments.deleted, 'Old assignment should  be deleted for User 1');
+        Assert.areEqual(0, PSAAssignments.inserted, 'No new assignment should be added for User 1');
+        Assert.areEqual(1, PSAAssignments.deleted, 'Old assignment should  be deleted for User 1');
     }
 }
