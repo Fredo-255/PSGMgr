@@ -16,6 +16,17 @@
 ### 1.2.0 
 - Add link to this page in package
 
+## Roadmap (As of today. Definitely not contractyual/ Suject to change based on my current mood))
+
+### 1.5 
+- Auto Assignment to Public Groups and Chatter groups
+
+### 2.0 (Safe Harbor implied as it depends on a preview feature!!!)
+- Use Dynamic formulaes feature (Dev preview in Spring '24) do define criteriaes beyond user profile
+
+### Other ideas : 
+- Global trigger bypass, should you wish to have control on the trigger handling.
+- UI to manage the custom metadata
 
 ## Description
 
